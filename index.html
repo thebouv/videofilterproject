@@ -8,6 +8,19 @@
     <base target="_blank">
 
     <style>
+    button {
+      font-size: 20px;
+    }
+
+    .buttons {
+      display: inline-block;
+      vertical-align: top;
+    }
+
+    .buttons br {
+      line-height: 3.6em;
+    }
+
     video {
       width: 1200px;
       height: 900px;
@@ -21,8 +34,9 @@
           position: relative;
           width: 1200px;
           height: 900px;
-          display: block;
+          display: inline-block;
           border: 3px solid black;
+          overflow: hidden;
     }
 
       ul {
@@ -48,13 +62,18 @@
   <body>
 
     <div id='video-space'>
-      <video autoplay></video>
+      <video id="thevideo" autoplay></video>
       <img class="videofilter">
     </div>
 
     <div class="buttons">
-      <button data-filter="tunnel">Tunnel Vision</button>
-      <button data-filter="spotty">Dark Spots</button>
+      <button>Normal</button><br>
+      <button data-filter="tunnel">Tunnel Vision</button><br>
+      <button data-filter="spotty">Dark Spots</button><br>
+      <button data-filter="loss">Partial Vision</button><br>
+      <button data-blur="1">Blurry Vision</button><br>
+      <button data-color="1">Reduced Color</button><br>
+      <!-- <button data-filter="light" data-count="4">Dark Spots</button><br> -->
     </div>
 
     <script>
@@ -77,14 +96,29 @@
         console.log("navigator.getUserMedia error: ", error);
       }
 
+      navigator.getUserMedia(constraints, successCallback, errorCallback);
+
       document.querySelector(".buttons").addEventListener('click', function(event) {
-        console.log('Applying the ' + event.target.dataset.filter + 'filter.');
+        resetAll();
         if (event.target.dataset.filter) {
+          console.log('Applying the ' + event.target.dataset.filter + 'filter.');
           document.querySelector(".videofilter").src = event.target.dataset.filter + '.png';
+        }
+        else if (event.target.dataset.blur === "1") {
+          console.log('Applying the blurry filter.');
+          document.getElementById("thevideo").style.webkitFilter="blur(25px)";
+        }
+        else if (event.target.dataset.color === "1") {
+          console.log('Applying the color filter.');
+          document.getElementById("thevideo").style.webkitFilter="saturate(25%)";
         }
       });
 
-      navigator.getUserMedia(constraints, successCallback, errorCallback);
+      function resetAll() {
+        console.log('Removing all filters.');
+        document.querySelector(".videofilter").src = '';
+        document.getElementById("thevideo").removeAttribute('style');
+      }
 
     </script>
 
